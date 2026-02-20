@@ -1,0 +1,36 @@
+# WakiDialogue.txt
+# Format:  speaker|text
+# To add a line: speaker|text   (one line per entry, # for comments)
+
+外國人|Hello, can I speak to Angel?
+和記|喂你好呀
+外國人|Can I speak to Angel.
+和記|我係和記環球電訊打黎架...
+外國人|Huh?
+和記|英文架...
+外國人|This is, this is... eh, Hutchison?
+和記|呀呀...呀邊個放-放假~
+外國人|Huh?
+和記|佢放假~
+外國人|邊個放假
+和記|Eh... 呀A...
+外國人|Angel?
+和記|Angel 放家~
+外國人|Angel 放假?
+和記|係呀
+外國人|Then you don't know Chin-English?
+和記|Eh, 佢聽日返嚟~
+外國人|Crazy people
+和記|佢聽日返黎~
+和記|佢聽日返來~
+外國人|Em, 邊個人識講英文呀你公司?
+和記|Eh, 等等先!
+和記|(細聲)邊個識講英文呀
+和記| Hello!
+外國人|Hello?
+和記|Angel 放假~
+外國人|No你公司邊個人識講英文呀
+和記|(普通話) Eh, Angel, 明天, 回來, 今天要放假
+外國人|唔係Angel, 你依家公司邊個人識講英文
+和記|無人識英文
+外國人|痴L線公司 DLLM
