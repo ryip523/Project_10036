@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 using TMPro;
 
 public class DistrictMapManager : MonoBehaviour
@@ -46,6 +47,7 @@ public class DistrictMapManager : MonoBehaviour
     private Transform _originalBGParent;
     private string _fullTitle;
     private TextMeshProUGUI _startHint;
+    private GameObject _exitButtonObj;
     private List<TextMeshProUGUI> _glowTexts = new List<TextMeshProUGUI>();
 
     private DistrictInteractable _hovered;
@@ -287,6 +289,11 @@ public class DistrictMapManager : MonoBehaviour
             _startHint.gameObject.SetActive(true);
         }
 
+        if (_exitButtonObj != null)
+            _exitButtonObj.SetActive(true);
+        else
+            CreateExitButton();
+
         _startTriggered = false;
         _titleReady = true;
     }
@@ -417,14 +424,82 @@ public class DistrictMapManager : MonoBehaviour
             hintRT.anchoredPosition = new Vector2(0f, 0f);
             hintRT.sizeDelta = new Vector2(400f, 40f);
         }
+
+        CreateExitButton();
+    }
+
+    private void CreateExitButton()
+    {
+        if (_exitButtonObj != null || _titleRoot == null) return;
+
+        _exitButtonObj = new GameObject("ExitButton");
+        _exitButtonObj.transform.SetParent(_titleRoot.transform, false);
+
+        RectTransform btnRT = _exitButtonObj.AddComponent<RectTransform>();
+        btnRT.anchorMin = new Vector2(0f, 1f);
+        btnRT.anchorMax = new Vector2(0f, 1f);
+        btnRT.pivot = new Vector2(0f, 1f);
+        btnRT.anchoredPosition = new Vector2(40f, -30f);
+        btnRT.sizeDelta = new Vector2(160f, 44f);
+
+        Image btnImg = _exitButtonObj.AddComponent<Image>();
+        btnImg.color = new Color(0.15f, 0.08f, 0.02f, 0.6f);
+
+        Button btn = _exitButtonObj.AddComponent<Button>();
+        ColorBlock cb = btn.colors;
+        cb.highlightedColor = new Color(1f, 0.7f, 0.3f, 0.3f);
+        cb.pressedColor = new Color(1f, 0.5f, 0.1f, 0.4f);
+        btn.colors = cb;
+        btn.onClick.AddListener(() =>
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
+        });
+
+        GameObject textObj = new GameObject("ExitText");
+        textObj.transform.SetParent(_exitButtonObj.transform, false);
+        TextMeshProUGUI label = textObj.AddComponent<TextMeshProUGUI>();
+        label.text = "離開遊戲";
+        label.font = titleFont;
+        label.fontSize = 22f;
+        label.alignment = TextAlignmentOptions.Center;
+        label.color = new Color(1f, 0.85f, 0.5f, 0.9f);
+        label.raycastTarget = false;
+
+        RectTransform labelRT = textObj.GetComponent<RectTransform>();
+        labelRT.anchorMin = Vector2.zero;
+        labelRT.anchorMax = Vector2.one;
+        labelRT.offsetMin = Vector2.zero;
+        labelRT.offsetMax = Vector2.zero;
+    }
+
+    private bool IsPointerOverButton()
+    {
+        if (EventSystem.current == null) return false;
+        var pointerData = new PointerEventData(EventSystem.current)
+        {
+            position = Mouse.current.position.ReadValue()
+        };
+        var results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, results);
+        foreach (var result in results)
+        {
+            if (result.gameObject.GetComponent<Button>() != null)
+                return true;
+        }
+        return false;
     }
 
     private void Update()
     {
         if (!_gameStarted)
         {
-            if (_titleReady && !_startTriggered && (Mouse.current.leftButton.wasPressedThisFrame
-                || Keyboard.current.anyKey.wasPressedThisFrame))
+            if (_titleReady && !_startTriggered
+                && (Mouse.current.leftButton.wasPressedThisFrame || Keyboard.current.anyKey.wasPressedThisFrame)
+                && !IsPointerOverButton())
             {
                 StartCoroutine(StartGame());
             }
